@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import ast
+import webbrowser
 
 NOT_FOUND_TITLE_MSG = "Didn't find anime title, please try again"
 
@@ -22,7 +23,7 @@ anime_data['score'] = anime_data['score'].astype('Float64')
 anime_drop = ['start_date', 'end_date', 'created_at', 'updated_at', 'episode_duration', 'total_duration',
               'background', 'main_picture', 'url', 'title_english', 'title_japanese', 'title_synonyms',
               'anime_id', 'scored_by', 'members', 'favorites', 'episodes', 'rating', 'start_year', 'start_season',
-              'real_start_date', 'real_end_date', 'broadcast_day', 'broadcast_time', 'licensors', 'trailer_url']
+              'real_start_date', 'real_end_date', 'broadcast_day', 'broadcast_time', 'licensors']
 anime_data = anime_data.drop(anime_drop, axis=1)
 
 # Choose only approved anime
@@ -42,7 +43,7 @@ for col in anime_list_features:
 del categorical_features
 
 # %% Learning Process
-anime_features = anime_data.drop(['title', 'synopsis'], axis=1)
+anime_features = anime_data.drop(['title', 'synopsis', 'trailer_url'], axis=1)
 
 num_of_neighbors = 6
 model = NearestNeighbors(n_neighbors=num_of_neighbors).fit(anime_features)
@@ -63,11 +64,12 @@ def get_index_from_title(title):
         print(NOT_FOUND_TITLE_MSG)
 
 
-def print_similar_anime(title, synopsis=False):
+def print_similar_anime(title, synopsis=False, trailer=False):
     """
     Prints 5 similar anime to a given title.
     :param title: The specific anime title
     :param synopsis: If True, the program will print the synopsis of similar anime
+    :param trailer: If True, the program will open the trailer of similar anime
     :return: None
     """
     found_id = get_index_from_title(title)
@@ -80,3 +82,5 @@ def print_similar_anime(title, synopsis=False):
             print("\n")
         else:
             print(anime_data.iloc[id]['title'])
+        if trailer:
+            webbrowser.open(str(anime_data.iloc[id]['trailer_url']))
