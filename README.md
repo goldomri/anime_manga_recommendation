@@ -1,5 +1,5 @@
 # Anime & Manga Recommendation Project
-This is a simple ML project for  anime and manga recommendations based on KNN algorithm.
+This is a simple ML project consists of two programs for anime and manga recommendations. Each program is independant.
 
 <img src="https://www.worldatlas.com/r/w960-q80/upload/89/75/f3/shutterstock-413397052.jpg" width=60% height=60%>
 
