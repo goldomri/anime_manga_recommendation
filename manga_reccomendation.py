@@ -7,19 +7,14 @@ import ast
 # %% Load and preprocess data
 manga_data = pd.read_csv("manga.csv")
 
-manga_list_features = ['genres', 'demographics']
+manga_list_features = ['genres', 'demographics', 'themes', 'serializations']
 for col in manga_list_features:
     manga_data[col] = manga_data[col].apply(ast.literal_eval)
 
-# manga_dtype_Int64 = ['volumes', 'chapters']
-# for col in manga_dtype_Int64:
-#     manga_data[col].fillna(np.round((manga_data[col].mean())), inplace=True)
-#     manga_data[col] = manga_data[col].astype('Int64')
-
 # Remove unnecessary columns
 manga_drop = ['start_date', 'end_date', 'created_at_before', 'updated_at', 'real_start_date', 'real_end_date',
-              'synopsis', 'background', 'main_picture', 'url', 'title_english', 'title_japanese', 'title_synonyms',
-              'serializations', 'themes', 'authors', 'manga_id', 'scored_by', 'score', 'volumes', 'chapters']
+              'background', 'main_picture', 'url', 'title_english', 'title_japanese', 'title_synonyms', 'authors',
+              'manga_id', 'scored_by', 'score', 'volumes', 'chapters', 'members', 'favorites']
 manga_data = manga_data.drop(manga_drop, axis=1)
 
 # Choose only approved manga
@@ -39,24 +34,25 @@ for col in manga_list_features:
 
 del categorical_features
 
-# %% Learning Proccess
-manga_features = manga_data.drop('title', axis=1)
+# %% Learning Process
+manga_features = manga_data.drop(['title', 'synopsis'], axis=1)
 
 num_of_neighbors = 6
 nbrs = NearestNeighbors(n_neighbors=num_of_neighbors, algorithm='ball_tree').fit(manga_features)
 distances, indices = nbrs.kneighbors(manga_features)
 
 
-# %% Helper Functions
+# %% Main output functions
 def get_index_from_title(title):
     """
     gets index of manga from title.
     :param title: The title of the wanted manga
     :return: The index of the manga in the dataset
     """
-    return manga_data[manga_data['title'] == title].index.tolist()[0]
+    return manga_data[manga_data['title'].str.lower() == title.lower()].index.tolist()[0]
 
-def print_similar_manga(title):
+
+def print_similar_manga(title, synopsis=False):
     """
     Prints 5 similar manga to a given title.
     :param title: The specific manga title
@@ -64,4 +60,11 @@ def print_similar_manga(title):
     """
     found_id = get_index_from_title(title)
     for id in indices[found_id][1:]:
-        print(manga_data.iloc[id]['title'])
+        if synopsis:
+            print("*" * 300)
+            print(manga_data.iloc[id]['title'])
+            print(manga_data.iloc[id]['synopsis'])
+            print("*" * 300)
+            print("\n")
+        else:
+            print(manga_data.iloc[id]['title'])
