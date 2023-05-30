@@ -9,10 +9,12 @@ NOT_FOUND_TITLE_MSG = "Didn't find manga title, please try again"
 # %% Load and preprocess data
 manga_data = pd.read_csv("manga.csv")
 
+# Change list features to type list
 manga_list_features = ['genres', 'demographics', 'themes', 'serializations']
 for col in manga_list_features:
     manga_data[col] = manga_data[col].apply(ast.literal_eval)
 
+# Process score feature
 manga_data['score'].fillna(np.round((manga_data['score'].mean())), inplace=True)
 manga_data['score'] = manga_data['score'].astype('Float64')
 
@@ -43,14 +45,14 @@ del categorical_features
 manga_features = manga_data.drop(['title', 'synopsis'], axis=1)
 
 num_of_neighbors = 6
-nbrs = NearestNeighbors(n_neighbors=num_of_neighbors).fit(manga_features)
-distances, indices = nbrs.kneighbors(manga_features)
+model = NearestNeighbors(n_neighbors=num_of_neighbors).fit(manga_features)
+distances, indices = model.kneighbors(manga_features)
 
 
 # %% Main output functions
 def get_index_from_title(title):
     """
-    gets index of manga from title.
+    Gets index of manga from title.
     :param title: The title of the wanted manga
     :return: The index of the manga in the dataset
     """
