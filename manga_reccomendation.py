@@ -13,18 +13,13 @@ manga_list_features = ['genres', 'demographics', 'themes', 'serializations']
 for col in manga_list_features:
     manga_data[col] = manga_data[col].apply(ast.literal_eval)
 
-manga_dtype_Int64 = ['volumes', 'chapters']
-for col in manga_dtype_Int64:
-    manga_data[col].fillna(np.round((manga_data[col].mean())), inplace=True)
-    manga_data[col] = manga_data[col].astype('Int64')
-
 manga_data['score'].fillna(np.round((manga_data['score'].mean())), inplace=True)
 manga_data['score'] = manga_data['score'].astype('Float64')
 
 # Remove unnecessary columns
 manga_drop = ['start_date', 'end_date', 'created_at_before', 'updated_at', 'real_start_date', 'real_end_date',
               'background', 'main_picture', 'url', 'title_english', 'title_japanese', 'title_synonyms', 'authors',
-              'manga_id', 'scored_by', 'members']
+              'manga_id', 'scored_by', 'members', 'favorites', 'volumes', 'chapters']
 manga_data = manga_data.drop(manga_drop, axis=1)
 
 # Choose only approved manga
