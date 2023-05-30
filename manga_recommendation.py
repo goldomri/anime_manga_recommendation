@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import ast
+import webbrowser
 
 NOT_FOUND_TITLE_MSG = "Didn't find manga title, please try again"
 
@@ -20,7 +21,7 @@ manga_data['score'] = manga_data['score'].astype('Float64')
 
 # Remove unnecessary columns
 manga_drop = ['start_date', 'end_date', 'created_at_before', 'updated_at', 'real_start_date', 'real_end_date',
-              'background', 'main_picture', 'url', 'title_english', 'title_japanese', 'title_synonyms', 'authors',
+              'background', 'main_picture', 'title_english', 'title_japanese', 'title_synonyms', 'authors',
               'manga_id', 'scored_by', 'members', 'favorites', 'volumes', 'chapters']
 manga_data = manga_data.drop(manga_drop, axis=1)
 
@@ -42,7 +43,7 @@ for col in manga_list_features:
 del categorical_features
 
 # %% Learning Process
-manga_features = manga_data.drop(['title', 'synopsis'], axis=1)
+manga_features = manga_data.drop(['title', 'synopsis', 'url'], axis=1)
 
 num_of_neighbors = 6
 model = NearestNeighbors(n_neighbors=num_of_neighbors).fit(manga_features)
@@ -63,11 +64,12 @@ def get_index_from_title(title):
         print(NOT_FOUND_TITLE_MSG)
 
 
-def print_similar_manga(title, synopsis=False):
+def print_similar_manga(title, synopsis=False, url=False):
     """
     Prints 5 similar manga to a given title.
     :param title: The specific manga title
     :param synopsis: If True, the program will print the synopsis of similar manga
+    :param url: If True, the program will open the manga page on myanimelist
     :return: None
     """
     found_id = get_index_from_title(title)
@@ -80,3 +82,5 @@ def print_similar_manga(title, synopsis=False):
             print("\n")
         else:
             print(manga_data.iloc[id]['title'])
+        if url:
+            webbrowser.open(str(manga_data.iloc[id]['url']))
