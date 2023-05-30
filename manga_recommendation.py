@@ -57,8 +57,8 @@ def get_index_from_title(title):
     :return: The index of the manga in the dataset
     """
     try:
-        return manga_data[manga_data['title'].str.casefold().str.replace('s/+', "") ==
-                          title.casefold().replace('s/+', "")].index.tolist()[0]
+        return manga_data[manga_data['title'].str.casefold().str.replace(' ', "") ==
+                          title.casefold().replace(' ', "")].index.tolist()[0]
     except IndexError:
         print(NOT_FOUND_TITLE_MSG)
 
