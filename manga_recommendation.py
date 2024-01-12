@@ -27,9 +27,8 @@ manga_data = manga_data.drop(manga_drop, axis=1)
 
 # Choose only approved manga
 manga_data = manga_data.loc[manga_data['approved'] == True]
-manga_data = manga_data.loc[manga_data['jikan'] == True]
 manga_data = manga_data.loc[manga_data['sfw'] == True]
-manga_data = manga_data.drop(['approved', 'jikan', 'sfw'], axis=1)
+manga_data = manga_data.drop(['approved', 'sfw'], axis=1)
 
 # Create Categorical features
 manga_categorical_features = ['type', 'status']
